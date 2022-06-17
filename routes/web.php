@@ -25,3 +25,9 @@ Route::middleware([
 ])->group(function () {
     Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
 });
+
+Route::prefix('admin')->group( function () {
+    Route::get('student', function () {
+        return view('student.student');
+    })->name('student');
+});

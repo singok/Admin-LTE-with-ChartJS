@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ $title }}</title>
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
@@ -22,7 +22,8 @@
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
-    <link rel="stylesheet" href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
     <!-- iCheck -->
     <link rel="stylesheet" href="{{ asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- JQVMap -->
@@ -50,7 +51,54 @@
 
         <!-- Page Content -->
         <main>
-            {{ $slot }}
+            <div class="pb-10">
+                <div class="max-w-8xl">
+                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                        <div class="wrapper">
+                            <!-- Navbar -->
+                            <x-nav i-type="bars" />
+                            <!-- /.navbar -->
+
+                            <!-- Main Sidebar Container -->
+                            <aside class="main-sidebar sidebar-collapse sidebar-light-primary elevation-4">
+                                <!-- Brand Logo -->
+                                <x-logo path="dist/img/AdminLTELogo.png" desc="Dashboard" />
+
+                                <!-- Sidebar -->
+                                <div class="sidebar">
+                                    <!-- Sidebar user panel (optional) -->
+                                    @php
+                                        $name = Auth::user()->name;
+                                    @endphp
+                                    <x-user-pic path="dist/img/user2-160x160.jpg" :user="$name" />
+
+                                    <!-- Sidebar Menu -->
+                                    <nav class="mt-2">
+                                        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview"
+                                            role="menu" data-accordion="false">
+                                            <x-menu-item icon-type="table-columns" desc="Dashboard"
+                                                routeName="dashboard" />
+                                            <x-menu-item icon-type="address-card" desc="Student" routeName="student" />
+                                        </ul>
+                                    </nav>
+                                    <!-- /.sidebar-menu -->
+                                </div>
+                                <!-- /.sidebar -->
+                            </aside>
+
+                            <!-- Content Wrapper. Contains page content -->
+                            <div class="content-wrapper">
+                                {{ $slot }}
+                            </div>
+
+                            <footer class="main-footer">
+                                <strong>Copyright © 2014-2022 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+                                All rights reserved.
+                            </footer>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 

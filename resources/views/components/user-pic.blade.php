@@ -4,6 +4,6 @@
             alt="User Image">
     </div>
     <div class="info">
-        <a href="#" class="d-block">{{ $username }}</a>
+        <span class="d-block">{{ $username }}</span>
     </div>
 </div>
