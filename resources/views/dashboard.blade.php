@@ -1,10 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
-
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
@@ -30,132 +24,119 @@
                         <ul class="navbar-nav ml-auto">
                             <!-- Navbar Search -->
                             <li class="nav-item">
-                                <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                                    <i class="fas fa-search"></i>
-                                </a>
-                                <div class="navbar-search-block">
-                                    <form class="form-inline">
-                                        <div class="input-group input-group-sm">
-                                            <input class="form-control form-control-navbar" type="search"
-                                                placeholder="Search" aria-label="Search">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-navbar" type="submit">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                                <button class="btn btn-navbar" type="button"
-                                                    data-widget="navbar-search">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </div>
+                                <div class="hidden sm:flex sm:items-center sm:ml-6">
+                                    <!-- Teams Dropdown -->
+                                    @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
+                                        <div class="ml-3 relative">
+                                            <x-jet-dropdown align="right" width="60">
+                                                <x-slot name="trigger">
+                                                    <span class="inline-flex rounded-md">
+                                                        <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
+                                                            {{ Auth::user()->currentTeam->name }}
+                    
+                                                            <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                    </span>
+                                                </x-slot>
+                    
+                                                <x-slot name="content">
+                                                    <div class="w-60">
+                                                        <!-- Team Management -->
+                                                        <div class="block px-4 py-2 text-xs text-gray-400">
+                                                            {{ __('Manage Team') }}
+                                                        </div>
+                    
+                                                        <!-- Team Settings -->
+                                                        <x-jet-dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
+                                                            {{ __('Team Settings') }}
+                                                        </x-jet-dropdown-link>
+                    
+                                                        @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+                                                            <x-jet-dropdown-link href="{{ route('teams.create') }}">
+                                                                {{ __('Create New Team') }}
+                                                            </x-jet-dropdown-link>
+                                                        @endcan
+                    
+                                                        <div class="border-t border-gray-100"></div>
+                    
+                                                        <!-- Team Switcher -->
+                                                        <div class="block px-4 py-2 text-xs text-gray-400">
+                                                            {{ __('Switch Teams') }}
+                                                        </div>
+                    
+                                                        @foreach (Auth::user()->allTeams() as $team)
+                                                            <x-jet-switchable-team :team="$team" />
+                                                        @endforeach
+                                                    </div>
+                                                </x-slot>
+                                            </x-jet-dropdown>
                                         </div>
-                                    </form>
+                                    @endif
+                    
+                                    <!-- Settings Dropdown -->
+                                    <div class="ml-3 relative">
+                                        <x-jet-dropdown align="right" width="48">
+                                            <x-slot name="trigger">
+                                                @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                                                    <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
+                                                        <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                                                    </button>
+                                                @else
+                                                    <span class="inline-flex rounded-md">
+                                                        <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
+                                                            {{ Auth::user()->name }}
+                    
+                                                            <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                    </span>
+                                                @endif
+                                            </x-slot>
+                    
+                                            <x-slot name="content">
+                                                <!-- Account Management -->
+                                                <div class="block px-4 py-2 text-xs text-gray-400">
+                                                    {{ __('Manage Account') }}
+                                                </div>
+                    
+                                                <x-jet-dropdown-link href="{{ route('profile.show') }}">
+                                                    {{ __('Profile') }}
+                                                </x-jet-dropdown-link>
+                    
+                                                @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                                                    <x-jet-dropdown-link href="{{ route('api-tokens.index') }}">
+                                                        {{ __('API Tokens') }}
+                                                    </x-jet-dropdown-link>
+                                                @endif
+                    
+                                                <div class="border-t border-gray-100"></div>
+                    
+                                                <!-- Authentication -->
+                                                <form method="POST" action="{{ route('logout') }}" x-data>
+                                                    @csrf
+                    
+                                                    <x-jet-dropdown-link href="{{ route('logout') }}"
+                                                             @click.prevent="$root.submit();">
+                                                        {{ __('Log Out') }}
+                                                    </x-jet-dropdown-link>
+                                                </form>
+                                            </x-slot>
+                                        </x-jet-dropdown>
+                                    </div>
                                 </div>
-                            </li>
-
-                            <!-- Messages Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link" data-toggle="dropdown" href="#">
-                                    <i class="far fa-comments"></i>
-                                    <span class="badge badge-danger navbar-badge">3</span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                    <a href="#" class="dropdown-item">
-                                        <!-- Message Start -->
-                                        <div class="media">
-                                            <img src="dist/img/user1-128x128.jpg" alt="User Avatar"
-                                                class="img-size-50 mr-3 img-circle">
-                                            <div class="media-body">
-                                                <h3 class="dropdown-item-title">
-                                                    Brad Diesel
-                                                    <span class="float-right text-sm text-danger"><i
-                                                            class="fas fa-star"></i></span>
-                                                </h3>
-                                                <p class="text-sm">Call me whenever you can...</p>
-                                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours
-                                                    Ago</p>
-                                            </div>
-                                        </div>
-                                        <!-- Message End -->
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item">
-                                        <!-- Message Start -->
-                                        <div class="media">
-                                            <img src="dist/img/user8-128x128.jpg" alt="User Avatar"
-                                                class="img-size-50 img-circle mr-3">
-                                            <div class="media-body">
-                                                <h3 class="dropdown-item-title">
-                                                    John Pierce
-                                                    <span class="float-right text-sm text-muted"><i
-                                                            class="fas fa-star"></i></span>
-                                                </h3>
-                                                <p class="text-sm">I got your message bro</p>
-                                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours
-                                                    Ago</p>
-                                            </div>
-                                        </div>
-                                        <!-- Message End -->
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item">
-                                        <!-- Message Start -->
-                                        <div class="media">
-                                            <img src="dist/img/user3-128x128.jpg" alt="User Avatar"
-                                                class="img-size-50 img-circle mr-3">
-                                            <div class="media-body">
-                                                <h3 class="dropdown-item-title">
-                                                    Nora Silvester
-                                                    <span class="float-right text-sm text-warning"><i
-                                                            class="fas fa-star"></i></span>
-                                                </h3>
-                                                <p class="text-sm">The subject goes here</p>
-                                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours
-                                                    Ago</p>
-                                            </div>
-                                        </div>
-                                        <!-- Message End -->
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+                    
+                                <!-- Hamburger -->
+                                <div class="-mr-2 flex items-center sm:hidden">
+                                    <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition">
+                                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                            <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                            <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
                                 </div>
-                            </li>
-                            <!-- Notifications Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link" data-toggle="dropdown" href="#">
-                                    <i class="far fa-bell"></i>
-                                    <span class="badge badge-warning navbar-badge">15</span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                    <span class="dropdown-item dropdown-header">15 Notifications</span>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item">
-                                        <i class="fas fa-envelope mr-2"></i> 4 new messages
-                                        <span class="float-right text-muted text-sm">3 mins</span>
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item">
-                                        <i class="fas fa-users mr-2"></i> 8 friend requests
-                                        <span class="float-right text-muted text-sm">12 hours</span>
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item">
-                                        <i class="fas fa-file mr-2"></i> 3 new reports
-                                        <span class="float-right text-muted text-sm">2 days</span>
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                                    <i class="fas fa-expand-arrows-alt"></i>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true"
-                                    href="#" role="button">
-                                    <i class="fas fa-th-large"></i>
-                                </a>
                             </li>
                         </ul>
                     </nav>
@@ -229,7 +210,7 @@
                                     <div class="col-sm-6">
                                         <ol class="breadcrumb float-sm-right">
                                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                            <li class="breadcrumb-item active">Dashboard v1</li>
+                                            <li class="breadcrumb-item active">Dashboard</li>
                                         </ol>
                                     </div><!-- /.col -->
                                 </div><!-- /.row -->
@@ -244,68 +225,21 @@
                                 <div class="row">
                                     <div class="col-lg-3 col-6">
                                         <!-- small box -->
-                                        <div class="small-box bg-info">
-                                            <div class="inner">
-                                                <h3>150</h3>
-
-                                                <p>New Orders</p>
-                                            </div>
-                                            <div class="icon">
-                                                <i class="ion ion-bag"></i>
-                                            </div>
-                                            <a href="#" class="small-box-footer">More info <i
-                                                    class="fas fa-arrow-circle-right"></i></a>
-                                        </div>
+                                        <x-card b-type="info" i-type="bag" detail="New Orders" count="500"/>
                                     </div>
-                                    <!-- ./col -->
                                     <div class="col-lg-3 col-6">
                                         <!-- small box -->
-                                        <div class="small-box bg-success">
-                                            <div class="inner">
-                                                <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                                                <p>Bounce Rate</p>
-                                            </div>
-                                            <div class="icon">
-                                                <i class="ion ion-stats-bars"></i>
-                                            </div>
-                                            <a href="#" class="small-box-footer">More info <i
-                                                    class="fas fa-arrow-circle-right"></i></a>
-                                        </div>
+                                        <x-card b-type="success" i-type="stats-bars" detail="Bounce Rate" count="20%"/>
                                     </div>
-                                    <!-- ./col -->
                                     <div class="col-lg-3 col-6">
                                         <!-- small box -->
-                                        <div class="small-box bg-warning">
-                                            <div class="inner">
-                                                <h3>44</h3>
-
-                                                <p>User Registrations</p>
-                                            </div>
-                                            <div class="icon">
-                                                <i class="ion ion-person-add"></i>
-                                            </div>
-                                            <a href="#" class="small-box-footer">More info <i
-                                                    class="fas fa-arrow-circle-right"></i></a>
-                                        </div>
+                                        <x-card b-type="warning" i-type="person-add" detail="User Registration" count="240"/>
                                     </div>
-                                    <!-- ./col -->
                                     <div class="col-lg-3 col-6">
                                         <!-- small box -->
-                                        <div class="small-box bg-danger">
-                                            <div class="inner">
-                                                <h3>65</h3>
-
-                                                <p>Unique Visitors</p>
-                                            </div>
-                                            <div class="icon">
-                                                <i class="ion ion-pie-graph"></i>
-                                            </div>
-                                            <a href="#" class="small-box-footer">More info <i
-                                                    class="fas fa-arrow-circle-right"></i></a>
-                                        </div>
+                                        <x-card b-type="danger" i-type="pie-graph" detail="Unique Visitors" count="1500"/>
                                     </div>
-                                    <!-- ./col -->
+                                   
                                 </div>
                                 <!-- /.row -->
                                 <!-- Main row -->
@@ -332,396 +266,7 @@
                                         </div>
                                         <!-- /.card -->
 
-                                        <!-- DIRECT CHAT -->
-                                        <div class="card direct-chat direct-chat-primary">
-                                            <div class="card-header">
-                                                <h3 class="card-title">Direct Chat</h3>
 
-                                                <div class="card-tools">
-                                                    <span title="3 New Messages" class="badge badge-primary">3</span>
-                                                    <button type="button" class="btn btn-tool"
-                                                        data-card-widget="collapse">
-                                                        <i class="fas fa-minus"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-tool" title="Contacts"
-                                                        data-widget="chat-pane-toggle">
-                                                        <i class="fas fa-comments"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-tool"
-                                                        data-card-widget="remove">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <!-- /.card-header -->
-                                            <div class="card-body">
-                                                <!-- Conversations are loaded here -->
-                                                <div class="direct-chat-messages">
-                                                    <!-- Message. Default to the left -->
-                                                    <div class="direct-chat-msg">
-                                                        <div class="direct-chat-infos clearfix">
-                                                            <span class="direct-chat-name float-left">Alexander
-                                                                Pierce</span>
-                                                            <span class="direct-chat-timestamp float-right">23 Jan 2:00
-                                                                pm</span>
-                                                        </div>
-                                                        <!-- /.direct-chat-infos -->
-                                                        <img class="direct-chat-img" src="dist/img/user1-128x128.jpg"
-                                                            alt="message user image">
-                                                        <!-- /.direct-chat-img -->
-                                                        <div class="direct-chat-text">
-                                                            Is this template really for free? That's unbelievable!
-                                                        </div>
-                                                        <!-- /.direct-chat-text -->
-                                                    </div>
-                                                    <!-- /.direct-chat-msg -->
-
-                                                    <!-- Message to the right -->
-                                                    <div class="direct-chat-msg right">
-                                                        <div class="direct-chat-infos clearfix">
-                                                            <span class="direct-chat-name float-right">Sarah
-                                                                Bullock</span>
-                                                            <span class="direct-chat-timestamp float-left">23 Jan 2:05
-                                                                pm</span>
-                                                        </div>
-                                                        <!-- /.direct-chat-infos -->
-                                                        <img class="direct-chat-img" src="dist/img/user3-128x128.jpg"
-                                                            alt="message user image">
-                                                        <!-- /.direct-chat-img -->
-                                                        <div class="direct-chat-text">
-                                                            You better believe it!
-                                                        </div>
-                                                        <!-- /.direct-chat-text -->
-                                                    </div>
-                                                    <!-- /.direct-chat-msg -->
-
-                                                    <!-- Message. Default to the left -->
-                                                    <div class="direct-chat-msg">
-                                                        <div class="direct-chat-infos clearfix">
-                                                            <span class="direct-chat-name float-left">Alexander
-                                                                Pierce</span>
-                                                            <span class="direct-chat-timestamp float-right">23 Jan 5:37
-                                                                pm</span>
-                                                        </div>
-                                                        <!-- /.direct-chat-infos -->
-                                                        <img class="direct-chat-img" src="dist/img/user1-128x128.jpg"
-                                                            alt="message user image">
-                                                        <!-- /.direct-chat-img -->
-                                                        <div class="direct-chat-text">
-                                                            Working with AdminLTE on a great new app! Wanna join?
-                                                        </div>
-                                                        <!-- /.direct-chat-text -->
-                                                    </div>
-                                                    <!-- /.direct-chat-msg -->
-
-                                                    <!-- Message to the right -->
-                                                    <div class="direct-chat-msg right">
-                                                        <div class="direct-chat-infos clearfix">
-                                                            <span class="direct-chat-name float-right">Sarah
-                                                                Bullock</span>
-                                                            <span class="direct-chat-timestamp float-left">23 Jan 6:10
-                                                                pm</span>
-                                                        </div>
-                                                        <!-- /.direct-chat-infos -->
-                                                        <img class="direct-chat-img" src="dist/img/user3-128x128.jpg"
-                                                            alt="message user image">
-                                                        <!-- /.direct-chat-img -->
-                                                        <div class="direct-chat-text">
-                                                            I would love to.
-                                                        </div>
-                                                        <!-- /.direct-chat-text -->
-                                                    </div>
-                                                    <!-- /.direct-chat-msg -->
-
-                                                </div>
-                                                <!--/.direct-chat-messages-->
-
-                                                <!-- Contacts are loaded here -->
-                                                <div class="direct-chat-contacts">
-                                                    <ul class="contacts-list">
-                                                        <li>
-                                                            <a href="#">
-                                                                <img class="contacts-list-img"
-                                                                    src="dist/img/user1-128x128.jpg" alt="User Avatar">
-
-                                                                <div class="contacts-list-info">
-                                                                    <span class="contacts-list-name">
-                                                                        Count Dracula
-                                                                        <small
-                                                                            class="contacts-list-date float-right">2/28/2015</small>
-                                                                    </span>
-                                                                    <span class="contacts-list-msg">How have you been?
-                                                                        I was...</span>
-                                                                </div>
-                                                                <!-- /.contacts-list-info -->
-                                                            </a>
-                                                        </li>
-                                                        <!-- End Contact Item -->
-                                                        <li>
-                                                            <a href="#">
-                                                                <img class="contacts-list-img"
-                                                                    src="dist/img/user7-128x128.jpg" alt="User Avatar">
-
-                                                                <div class="contacts-list-info">
-                                                                    <span class="contacts-list-name">
-                                                                        Sarah Doe
-                                                                        <small
-                                                                            class="contacts-list-date float-right">2/23/2015</small>
-                                                                    </span>
-                                                                    <span class="contacts-list-msg">I will be waiting
-                                                                        for...</span>
-                                                                </div>
-                                                                <!-- /.contacts-list-info -->
-                                                            </a>
-                                                        </li>
-                                                        <!-- End Contact Item -->
-                                                        <li>
-                                                            <a href="#">
-                                                                <img class="contacts-list-img"
-                                                                    src="dist/img/user3-128x128.jpg" alt="User Avatar">
-
-                                                                <div class="contacts-list-info">
-                                                                    <span class="contacts-list-name">
-                                                                        Nadia Jolie
-                                                                        <small
-                                                                            class="contacts-list-date float-right">2/20/2015</small>
-                                                                    </span>
-                                                                    <span class="contacts-list-msg">I'll call you back
-                                                                        at...</span>
-                                                                </div>
-                                                                <!-- /.contacts-list-info -->
-                                                            </a>
-                                                        </li>
-                                                        <!-- End Contact Item -->
-                                                        <li>
-                                                            <a href="#">
-                                                                <img class="contacts-list-img"
-                                                                    src="dist/img/user5-128x128.jpg" alt="User Avatar">
-
-                                                                <div class="contacts-list-info">
-                                                                    <span class="contacts-list-name">
-                                                                        Nora S. Vans
-                                                                        <small
-                                                                            class="contacts-list-date float-right">2/10/2015</small>
-                                                                    </span>
-                                                                    <span class="contacts-list-msg">Where is your
-                                                                        new...</span>
-                                                                </div>
-                                                                <!-- /.contacts-list-info -->
-                                                            </a>
-                                                        </li>
-                                                        <!-- End Contact Item -->
-                                                        <li>
-                                                            <a href="#">
-                                                                <img class="contacts-list-img"
-                                                                    src="dist/img/user6-128x128.jpg" alt="User Avatar">
-
-                                                                <div class="contacts-list-info">
-                                                                    <span class="contacts-list-name">
-                                                                        John K.
-                                                                        <small
-                                                                            class="contacts-list-date float-right">1/27/2015</small>
-                                                                    </span>
-                                                                    <span class="contacts-list-msg">Can I take a look
-                                                                        at...</span>
-                                                                </div>
-                                                                <!-- /.contacts-list-info -->
-                                                            </a>
-                                                        </li>
-                                                        <!-- End Contact Item -->
-                                                        <li>
-                                                            <a href="#">
-                                                                <img class="contacts-list-img"
-                                                                    src="dist/img/user8-128x128.jpg" alt="User Avatar">
-
-                                                                <div class="contacts-list-info">
-                                                                    <span class="contacts-list-name">
-                                                                        Kenneth M.
-                                                                        <small
-                                                                            class="contacts-list-date float-right">1/4/2015</small>
-                                                                    </span>
-                                                                    <span class="contacts-list-msg">Never mind I
-                                                                        found...</span>
-                                                                </div>
-                                                                <!-- /.contacts-list-info -->
-                                                            </a>
-                                                        </li>
-                                                        <!-- End Contact Item -->
-                                                    </ul>
-                                                    <!-- /.contacts-list -->
-                                                </div>
-                                                <!-- /.direct-chat-pane -->
-                                            </div>
-                                            <!-- /.card-body -->
-                                            <div class="card-footer">
-                                                <form action="#" method="post">
-                                                    <div class="input-group">
-                                                        <input type="text" name="message" placeholder="Type Message ..."
-                                                            class="form-control">
-                                                        <span class="input-group-append">
-                                                            <button type="button" class="btn btn-primary">Send</button>
-                                                        </span>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <!-- /.card-footer-->
-                                        </div>
-                                        <!--/.direct-chat -->
-
-                                        <!-- TO DO List -->
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h3 class="card-title">
-                                                    <i class="ion ion-clipboard mr-1"></i>
-                                                    To Do List
-                                                </h3>
-
-                                                <div class="card-tools">
-                                                    <ul class="pagination pagination-sm">
-                                                        <li class="page-item"><a href="#"
-                                                                class="page-link">&laquo;</a></li>
-                                                        <li class="page-item"><a href="#"
-                                                                class="page-link">1</a></li>
-                                                        <li class="page-item"><a href="#"
-                                                                class="page-link">2</a></li>
-                                                        <li class="page-item"><a href="#"
-                                                                class="page-link">3</a></li>
-                                                        <li class="page-item"><a href="#"
-                                                                class="page-link">&raquo;</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <!-- /.card-header -->
-                                            <div class="card-body">
-                                                <ul class="todo-list" data-widget="todo-list">
-                                                    <li>
-                                                        <!-- drag handle -->
-                                                        <span class="handle">
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                        </span>
-                                                        <!-- checkbox -->
-                                                        <div class="icheck-primary d-inline ml-2">
-                                                            <input type="checkbox" value="" name="todo1"
-                                                                id="todoCheck1">
-                                                            <label for="todoCheck1"></label>
-                                                        </div>
-                                                        <!-- todo text -->
-                                                        <span class="text">Design a nice theme</span>
-                                                        <!-- Emphasis label -->
-                                                        <small class="badge badge-danger"><i
-                                                                class="far fa-clock"></i> 2
-                                                            mins</small>
-                                                        <!-- General tools such as edit or delete-->
-                                                        <div class="tools">
-                                                            <i class="fas fa-edit"></i>
-                                                            <i class="fas fa-trash-o"></i>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <span class="handle">
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                        </span>
-                                                        <div class="icheck-primary d-inline ml-2">
-                                                            <input type="checkbox" value="" name="todo2" id="todoCheck2"
-                                                                checked>
-                                                            <label for="todoCheck2"></label>
-                                                        </div>
-                                                        <span class="text">Make the theme responsive</span>
-                                                        <small class="badge badge-info"><i class="far fa-clock"></i>
-                                                            4 hours</small>
-                                                        <div class="tools">
-                                                            <i class="fas fa-edit"></i>
-                                                            <i class="fas fa-trash-o"></i>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <span class="handle">
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                        </span>
-                                                        <div class="icheck-primary d-inline ml-2">
-                                                            <input type="checkbox" value="" name="todo3"
-                                                                id="todoCheck3">
-                                                            <label for="todoCheck3"></label>
-                                                        </div>
-                                                        <span class="text">Let theme shine like a star</span>
-                                                        <small class="badge badge-warning"><i
-                                                                class="far fa-clock"></i> 1
-                                                            day</small>
-                                                        <div class="tools">
-                                                            <i class="fas fa-edit"></i>
-                                                            <i class="fas fa-trash-o"></i>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <span class="handle">
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                        </span>
-                                                        <div class="icheck-primary d-inline ml-2">
-                                                            <input type="checkbox" value="" name="todo4"
-                                                                id="todoCheck4">
-                                                            <label for="todoCheck4"></label>
-                                                        </div>
-                                                        <span class="text">Let theme shine like a star</span>
-                                                        <small class="badge badge-success"><i
-                                                                class="far fa-clock"></i> 3
-                                                            days</small>
-                                                        <div class="tools">
-                                                            <i class="fas fa-edit"></i>
-                                                            <i class="fas fa-trash-o"></i>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <span class="handle">
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                        </span>
-                                                        <div class="icheck-primary d-inline ml-2">
-                                                            <input type="checkbox" value="" name="todo5"
-                                                                id="todoCheck5">
-                                                            <label for="todoCheck5"></label>
-                                                        </div>
-                                                        <span class="text">Check your messages and
-                                                            notifications</span>
-                                                        <small class="badge badge-primary"><i
-                                                                class="far fa-clock"></i> 1
-                                                            week</small>
-                                                        <div class="tools">
-                                                            <i class="fas fa-edit"></i>
-                                                            <i class="fas fa-trash-o"></i>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <span class="handle">
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                        </span>
-                                                        <div class="icheck-primary d-inline ml-2">
-                                                            <input type="checkbox" value="" name="todo6"
-                                                                id="todoCheck6">
-                                                            <label for="todoCheck6"></label>
-                                                        </div>
-                                                        <span class="text">Let theme shine like a star</span>
-                                                        <small class="badge badge-secondary"><i
-                                                                class="far fa-clock"></i> 1
-                                                            month</small>
-                                                        <div class="tools">
-                                                            <i class="fas fa-edit"></i>
-                                                            <i class="fas fa-trash-o"></i>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <!-- /.card-body -->
-                                            <div class="card-footer clearfix">
-                                                <button type="button" class="btn btn-primary float-right"><i
-                                                        class="fas fa-plus"></i> Add item</button>
-                                            </div>
-                                        </div>
-                                        <!-- /.card -->
                                     </section>
                                     <!-- /.Left col -->
                                     <!-- right col (We are only adding the ID to make the widgets sortable)-->
@@ -771,107 +316,6 @@
                                                 </div>
                                                 <!-- /.row -->
                                             </div>
-                                        </div>
-                                        <!-- /.card -->
-
-                                        <!-- solid sales graph -->
-                                        <div class="card bg-gradient-info">
-                                            <div class="card-header border-0">
-                                                <h3 class="card-title">
-                                                    <i class="fas fa-th mr-1"></i>
-                                                    Sales Graph
-                                                </h3>
-
-                                                <div class="card-tools">
-                                                    <button type="button" class="btn bg-info btn-sm"
-                                                        data-card-widget="collapse">
-                                                        <i class="fas fa-minus"></i>
-                                                    </button>
-                                                    <button type="button" class="btn bg-info btn-sm"
-                                                        data-card-widget="remove">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="card-body">
-                                                <canvas class="chart" id="line-chart"
-                                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                                            </div>
-                                            <!-- /.card-body -->
-                                            <div class="card-footer bg-transparent">
-                                                <div class="row">
-                                                    <div class="col-4 text-center">
-                                                        <input type="text" class="knob" data-readonly="true"
-                                                            value="20" data-width="60" data-height="60"
-                                                            data-fgColor="#39CCCC">
-
-                                                        <div class="text-white">Mail-Orders</div>
-                                                    </div>
-                                                    <!-- ./col -->
-                                                    <div class="col-4 text-center">
-                                                        <input type="text" class="knob" data-readonly="true"
-                                                            value="50" data-width="60" data-height="60"
-                                                            data-fgColor="#39CCCC">
-
-                                                        <div class="text-white">Online</div>
-                                                    </div>
-                                                    <!-- ./col -->
-                                                    <div class="col-4 text-center">
-                                                        <input type="text" class="knob" data-readonly="true"
-                                                            value="30" data-width="60" data-height="60"
-                                                            data-fgColor="#39CCCC">
-
-                                                        <div class="text-white">In-Store</div>
-                                                    </div>
-                                                    <!-- ./col -->
-                                                </div>
-                                                <!-- /.row -->
-                                            </div>
-                                            <!-- /.card-footer -->
-                                        </div>
-                                        <!-- /.card -->
-
-                                        <!-- Calendar -->
-                                        <div class="card bg-gradient-success">
-                                            <div class="card-header border-0">
-
-                                                <h3 class="card-title">
-                                                    <i class="far fa-calendar-alt"></i>
-                                                    Calendar
-                                                </h3>
-                                                <!-- tools card -->
-                                                <div class="card-tools">
-                                                    <!-- button with a dropdown -->
-                                                    <div class="btn-group">
-                                                        <button type="button"
-                                                            class="btn btn-success btn-sm dropdown-toggle"
-                                                            data-toggle="dropdown" data-offset="-52">
-                                                            <i class="fas fa-bars"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu" role="menu">
-                                                            <a href="#" class="dropdown-item">Add new event</a>
-                                                            <a href="#" class="dropdown-item">Clear events</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="#" class="dropdown-item">View calendar</a>
-                                                        </div>
-                                                    </div>
-                                                    <button type="button" class="btn btn-success btn-sm"
-                                                        data-card-widget="collapse">
-                                                        <i class="fas fa-minus"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-success btn-sm"
-                                                        data-card-widget="remove">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </div>
-                                                <!-- /. tools -->
-                                            </div>
-                                            <!-- /.card-header -->
-                                            <div class="card-body pt-0">
-                                                <!--The calendar -->
-                                                <div id="calendar" style="width: 100%"></div>
-                                            </div>
-                                            <!-- /.card-body -->
                                         </div>
                                         <!-- /.card -->
                                     </section>
