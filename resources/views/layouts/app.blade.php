@@ -39,6 +39,7 @@
 
     @livewireStyles
 
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
     <!-- Scripts -->
@@ -78,7 +79,7 @@
                                             role="menu" data-accordion="false">
                                             <x-menu-item icon-type="table-columns" desc="Dashboard"
                                                 routeName="dashboard" />
-                                            <x-menu-item icon-type="address-card" desc="Student" routeName="student" />
+                                            <x-menu-item icon-type="address-card" desc="Student" routeName="student.list" />
                                         </ul>
                                     </nav>
                                     <!-- /.sidebar-menu -->
@@ -142,6 +143,7 @@
     <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     @stack('script')
 </body>
 

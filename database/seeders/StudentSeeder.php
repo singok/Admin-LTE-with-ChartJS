@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Faker\Faker as fake;
-use App\Model\Student;
+use Faker\Factory as fake;
+use App\Models\Student;
 
 class StudentSeeder extends Seeder
 {
@@ -28,7 +28,7 @@ class StudentSeeder extends Seeder
                 'gender' => $info->randomElement(['male','female','other']),
                 'DOB' => $info->dateTimeThisMonth(),
                 'grade' => $info->numberBetween(1,12),
-                'studentid' => text(10)
+                'studentid' => $info->unique()->randomNumber(8, true)
             ]);
         }
     }
