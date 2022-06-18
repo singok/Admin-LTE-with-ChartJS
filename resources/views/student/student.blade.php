@@ -14,7 +14,7 @@
             <div class="row">
                 <!-- Left col -->
                 <section class="col connectedSortable">
-                    <table id="myTable" class="stripe">
+                    <table id="myTable" class="table table-bordered">
                         <thead>
                             <tr>
                                 <th>Fname</th>
@@ -26,10 +26,11 @@
                                 <th>D-O-B</th>
                                 <th>Grade</th>
                                 <th>StudentID</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
+
                         </tbody>
                     </table>
                 </section>
@@ -42,38 +43,34 @@
     @push('script')
         <script type="text/javascript">
             $(document).ready(function() {
-                $.noConflict();
-                $.fn.dataTable.ext.errMode = 'throw';
                 $('#myTable').DataTable({
-                    'processing': true,
-                    'serverside': true,
                     'ajax': '{{ route("student.getdata") }}',
                     'columns': [{
                             'data': 'fname'
                         },
                         {
-                            'data': 'fname'
+                            'data': 'mname'
                         },
                         {
-                            'data': 'fname'
+                            'data': 'lname'
                         },
                         {
-                            'data': 'fname'
+                            'data': 'email'
                         },
                         {
-                            'data': 'fname'
+                            'data': 'phone'
                         },
                         {
-                            'data': 'fname'
+                            'data': 'gender'
                         },
                         {
-                            'data': 'fname'
+                            'data': 'DOB'
                         },
                         {
-                            'data': 'fname'
+                            'data': 'grade'
                         },
                         {
-                            'data': 'fname'
+                            'data': 'studentid'
                         }
                     ]
                 });

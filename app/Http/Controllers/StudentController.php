@@ -10,7 +10,6 @@ class StudentController extends Controller
 {
     public function list() {
         $students = Student::all();
-        // return DataTables::of($students)->make(true)
-        dd(DataTables::of($students)->make(true));
+        return DataTables::of($students)->make(true);
     }
 }
